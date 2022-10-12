@@ -57,7 +57,7 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
 
 // Time Management
 Ticker ScreenUpdateTicker(DisplayClock, 1000, 0, MILLIS);
-Ticker SyncRTCTicker(SyncRTC, 1000, 0, MILLIS);
+Ticker SyncRTCTicker(SyncRTC, 60000, 0, MILLIS);
 
 int wait = 100; // In milliseconds
 int spacer = 1;
@@ -138,29 +138,6 @@ void AdjustBrightness(){
         matrix.setIntensity(DAY_DISPLAY_INTENSITY);
 }
 
-String GetDateTimeString(DateTime dateTime)
-{
-    String network_date_time = String(dateTime.year());
-    network_date_time += "-";
-    network_date_time += String(dateTime.month());
-    network_date_time += "-";
-    network_date_time += String(dateTime.day());
-    network_date_time += " ";
-
-    // Time
-    network_date_time += String(dateTime.hour());
-    network_date_time += ":";
-    if(dateTime.minute() < 10)
-        network_date_time += "0";
-    network_date_time += String(dateTime.minute());
-    network_date_time += ":";
-    if(dateTime.second() < 10)
-        network_date_time += "0";
-    network_date_time += String(dateTime.second());
-
-    return network_date_time;
-}
-
 void DisplayClock(){
     // Get Time From Local RTC
     TimeNowRTC = RTC.now();
@@ -229,9 +206,9 @@ void SyncRTC(){
         DateTime internetTime(epochTime);
 
         RTC.adjust(internetTime);
-        Serial.println("RTC Synced");
 
-        Serial.println(GetDateTimeString(internetTime));
+        char buff[] = "RTC Synced YYYY-MM-DD hh:mm:ss";
+        Serial.println(internetTime.toString(buff));
     }
 }
 
